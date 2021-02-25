@@ -8,6 +8,12 @@
     <title>Document</title>
 </head>
 <body>
-<h1>Hello</h1>
+@foreach($products as $product)
+    <tr>
+        <td>{{ $product->id }}</td>
+        <td>{{ $product->title }}</td>
+        <td>{{ $product->categories->pluck('id')}}</td>
+    </tr>
+@endforeach
 </body>
 </html>
