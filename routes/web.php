@@ -16,10 +16,8 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
-Route::get('/test/categories','TestConsole\TestCategories@index');
 
-Route::post('/api/sorting', 'API\SortingController@sorting');
-Route::post('/api/search', 'API\SearchController@getProductCategory');
+Route::get('/test/categories','TestConsole\TestCategories@index');
 
 Route::group(['middleware'=>'guest','prefix'=>'api', 'namespace'=>'API'], function (){
     Route::post('login', 'RegisterController@login');
@@ -27,7 +25,9 @@ Route::group(['middleware'=>'guest','prefix'=>'api', 'namespace'=>'API'], functi
 });
 
 Route::group(['middleware'=>'auth','prefix'=>'api', 'namespace'=>'API'], function (){
-    Route::resource('products', 'ProductController');
-    Route::resource('categories', 'CategoryController');
+    Route::apiResource('products', 'ProductController');
+    Route::apiResource('categories', 'CategoryController');
+    Route::get('products/categories/{id}', 'ProductController@getProductCategory');
     Route::post('logout', 'RegisterController@logout');
 });
+

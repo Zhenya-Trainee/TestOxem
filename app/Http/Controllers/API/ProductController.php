@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\API\BaseController as BaseController;
+use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 
@@ -15,10 +17,47 @@ class ProductController extends BaseController
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function index()
+    public function index(Request $request)
     {
-        $products = Product::query()->paginate(50);
-        return $this->sendResponse($products->toArray(), 'Products retrieved successfully.');
+        switch ($request->s)
+        {
+            case 1:
+                $products = Product::query()->orderBy('price','ASC')->paginate(50);
+                return $this->sendResponse($products->toArray(), 'Products retrieved successfully ascending price');
+            case 2:
+                $products = Product::query()->orderBy('price','DESC')->paginate(50);
+                return $this->sendResponse($products->toArray(), 'Products retrieved successfully descending price');
+            case 3:
+                $products = Product::query()->orderBy('created_at','ASC')->paginate(50);
+                return $this->sendResponse($products->toArray(), 'Products retrieved successfully ascending date');
+            case 4:
+                $products = Product::query()->orderBy('created_at','DESC')->paginate(50);
+                return $this->sendResponse($products->toArray(), 'Products retrieved successfully descending date');
+            default:
+                $products = Product::query()->paginate(50);
+                 return $this->sendResponse($products->toArray(), 'Products retrieved successfully.');
+        }
+
+    }
+
+    public function getProductCategory(Request $request)
+    {
+        if ($categories = Category::query()->where('id', $request->id)->first()) {
+            $products = DB::query()->select('p.*', 'c.name as category', 'c.id as category_id')
+                ->from('categories as c')
+                ->join('category_product as cp', 'cp.category_id', '=', 'c.id')
+                ->join('products as p', 'cp.product_id', '=', 'p.id')
+                ->where('cp.category_id', '=', $request->id)
+                ->get();
+            if (sizeof($products)) {
+                return $this->sendResponse($products->toArray(), 'Products of this category have been successfully received');
+            } else {
+                return $this->sendError( 'There are no products in this category');
+            }
+        }
+        else {
+            return $this->sendError('Category not found');
+        }
     }
 
     /**

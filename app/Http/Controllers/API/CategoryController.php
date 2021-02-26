@@ -92,13 +92,14 @@ class CategoryController extends BaseController
             $validator = Validator::make($input, [
                 'name'=>'required'
             ]);
+            $input['products'] = $request->products;
 
             if($validator->fails()){
                 return $this->sendError('Validation Error.', $validator->errors());
             }
             $category->name = $input['name'];
             $category->id_parent = $input['id_parent'];
-
+            $category->products()->sync($request->products);
             $category->save();
             return $this->sendResponse($category->toArray(), 'Category updated successfully.');
         }
