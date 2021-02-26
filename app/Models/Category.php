@@ -15,7 +15,7 @@ class Category extends Model
         return $this->belongsToMany(Product::class);
     }
 
-    protected $fillable = ['name','externalID'];
+    protected $fillable = ['name','externalID','id_parent'];
 
     public $timestamps = false;
 }
