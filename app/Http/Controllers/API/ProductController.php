@@ -65,20 +65,10 @@ class ProductController extends BaseController
      *
      * @return \Illuminate\Http\Response
      */
-    /*public function create(Request $request)
+    public function create(Request $request)
     {
-
-        $input = $request->all();
-        $validator = Validator::make($input, [
-            'name' => 'required',
-            'detail' => 'required'
-        ]);
-        if($validator->fails()){
-            return $this->sendError('Validation Error.', $validator->errors());
-        }
-        $product = Product::query()->create($input);
-        return $this->sendResponse($product->toArray(), 'Product created successfully.');
-    }*/
+        //
+    }
 
     /**
      * Store a newly created resource in storage.
@@ -128,7 +118,7 @@ class ProductController extends BaseController
      * @param  int  $id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update(Request $request,$id)
+    /*public function update(Request $request,$id)
     {
         $product = Product::query()->find($id);
         if (is_null($product)) {
@@ -155,7 +145,7 @@ class ProductController extends BaseController
             return $this->sendResponse($request->toArray(), 'Product updated successfully.');
         }
 
-    }
+    }*/
 
     /**
      * Remove the specified resource from storage.
@@ -169,6 +159,7 @@ class ProductController extends BaseController
         if (is_null($product)) {
             return $this->sendError('Product not found.');
         } else {
+            DB::delete("DELETE FROM category_product WHERE product_id = {$id}");
             $product->delete();
             return $this->sendResponse($product->toArray(), 'Product deleted successfully.');
         }

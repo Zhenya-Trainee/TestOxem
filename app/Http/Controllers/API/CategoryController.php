@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\API\BaseController as BaseController;
 use App\Models\Category;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 
@@ -13,7 +14,7 @@ class CategoryController extends BaseController
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function index()
     {
@@ -35,7 +36,7 @@ class CategoryController extends BaseController
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function store(Request $request)
     {
@@ -43,6 +44,7 @@ class CategoryController extends BaseController
         $validator = Validator::make($input, [
             'name' => 'required'
         ]);
+        $input['id_parent'] = $request->id_parent;
         $input['externalID'] = Str::random(30);
         $input['products'] = $request->products;
         if($validator->fails()){
@@ -110,14 +112,15 @@ class CategoryController extends BaseController
      * Remove the specified resource from storage.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function destroy($id){
 
         $category = Category::query()->find($id);
         if (is_null($category)) {
-            return $this->sendError('Product not found.');
+            return $this->sendError('Category not found.');
         } else {
+            DB::delete("DELETE FROM category_product WHERE category_id = {$id}");
             $category->delete();
             return $this->sendResponse($category->toArray(), 'Category deleted successfully.');
         }
