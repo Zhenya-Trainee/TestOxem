@@ -159,7 +159,8 @@ class ProductController extends BaseController
         if (is_null($product)) {
             return $this->sendError('Product not found.');
         } else {
-            DB::delete("DELETE FROM category_product WHERE product_id = {$id}");
+            $product->categories()->sync([]);
+            /*DB::delete("DELETE FROM category_product WHERE product_id = {$id}");*/
             $product->delete();
             return $this->sendResponse($product->toArray(), 'Product deleted successfully.');
         }

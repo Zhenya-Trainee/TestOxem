@@ -122,7 +122,8 @@ class CategoryController extends BaseController
         if (is_null($category)) {
             return $this->sendError('Category not found.');
         } else {
-            DB::delete("DELETE FROM category_product WHERE category_id = {$id}");
+            $category->products()->sync([]);
+            /*DB::delete("DELETE FROM category_product WHERE category_id = {$id}");*/
             $category->delete();
             return $this->sendResponse($category->toArray(), 'Category deleted successfully.');
         }
